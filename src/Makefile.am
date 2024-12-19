@@ -17,6 +17,7 @@ parky_SOURCES = \
 	service.c service.h \
 	citoyen.c citoyen.h \
 	reservation.c reservation.h \
-	avis.c avis.h
+	avis.c avis.h #\ THIS IS COMMENTED BECAUSE agent.c and agent.h doesn't work, @NG FIX THE COMPILATION ERRORS
+	#agent.c agent.h
 
 parky_LDADD = @PACKAGE_LIBS@ $(INTLLIBS)

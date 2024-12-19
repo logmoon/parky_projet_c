@@ -289,7 +289,8 @@ parky_SOURCES = \
 	service.c service.h \
 	citoyen.c citoyen.h \
 	reservation.c reservation.h \
-	avis.c avis.h
+	avis.c avis.h #\
+	#agent.c agent.h
 
 parky_LDADD = @PACKAGE_LIBS@ $(INTLLIBS)
 all: all-am
