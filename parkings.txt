@@ -1,0 +1,2 @@
+1 awdwa awdawd Exterieur 1 1 -1 -1 1 1
+2 fghj dfghj Exterieur 1 1 -1 -1 1 2
