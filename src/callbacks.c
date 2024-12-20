@@ -1096,13 +1096,108 @@ GtkWidget *Affichagelistedereservation,*treeview1_tree_par_tri;
 // ---------------------------------------------------------------------------------
 // IBTIHEL BACCARI:
 // ---------------------------------------------------------------------------------
-/*
 #include "service.h"
 int selected = 1;
 int available = 0;
 
 char temp [20];
 
+enum
+ {
+    ID,
+    NOM,
+    DESCRIPTION,
+    PRIX,
+    DISPONIBILITE,
+    COLUMNS
+};
+
+void ajouter_service(service s) {
+    FILE *f = fopen("service.txt", "a+");
+    if (f != NULL) {
+        fprintf(f, "%d %s %s %d %s\n", s.id, s.nom, s.description, s.prix, s.disponibilite);
+        fclose(f);
+    }
+}
+
+void afficher_service(GtkWidget *liste) {
+    GtkCellRenderer *renderer;
+    GtkTreeViewColumn *column;
+    GtkTreeIter iter;
+    GtkListStore *store;
+
+    int id;
+    char nom[50], description[100], disponibilite[20];
+    int prix;
+    FILE *f;
+
+    store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(liste)));
+    if (store == NULL) {
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("ID", renderer, "text", ID, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
+
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("Nom", renderer, "text", NOM, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
+
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("Description", renderer, "text", DESCRIPTION, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
+
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("Prix", renderer, "text", PRIX, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
+
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("Disponibilité", renderer, "text", DISPONIBILITE, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
+
+        store = gtk_list_store_new(COLUMNS, G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
+    }
+
+    f = fopen("service.txt", "r");
+    if (f != NULL) {
+        while (fscanf(f, "%d %s %s %d %s\n", &id, nom, description, &prix, disponibilite) != EOF) {
+            gtk_list_store_append(store, &iter);
+            gtk_list_store_set(store, &iter, ID, id, NOM, nom, DESCRIPTION, description, PRIX, prix, DISPONIBILITE, disponibilite, -1);
+        }
+        fclose(f);
+    }
+
+    gtk_tree_view_set_model(GTK_TREE_VIEW(liste), GTK_TREE_MODEL(store));
+    g_object_unref(store);
+}
+
+void supprimer_service(service s) {
+    int id;
+    char nom[50], description[100], disponibilite[20];
+    int prix;
+
+    FILE *f = fopen("service.txt", "r");
+    FILE *g = fopen("ttmp.txt", "w");
+
+    if (f == NULL || g == NULL) {
+        return;
+    }
+
+    while (fscanf(f, "%d %s %s %d %s\n", &id, nom, description, &prix, disponibilite) != EOF) {
+        if (id != s.id) {
+            fprintf(g, "%d %s %s %d %s\n", id, nom, description, prix, disponibilite);
+        }
+    }
+
+    fclose(f);
+    fclose(g);
+    remove("service.txt");
+    rename("ttmp.txt", "service.txt");
+}
+
+
+
+
+
+	
 void
 on_IBbuttonVA_clicked                  (GtkWidget      *objet_graphique,
                                         gpointer         user_data)
@@ -1285,22 +1380,22 @@ void
 on_button_supprimer_clicked            (GtkWidget      *objet_graphique,
                                         gpointer         user_data)
 {
-  GtkWidget *EntryID;
+    GtkWidget *EntryID;
     int id_to_delete;
     FILE *f, *temps;
     service s;
 
-   
-    EntryID = lookup_widget(GTK_WIDGET(objet_graphique), "entryId"); 
+    // Récupérer le champ ID
+    EntryID = lookup_widget(GTK_WIDGET(objet_graphique), "entryId"); // Champ pour entrer l'ID à supprimer
     id_to_delete = atoi(gtk_entry_get_text(GTK_ENTRY(EntryID)));
 
-    
+    // Vérification si l'ID est saisi
     if (id_to_delete == 0) {
         g_print("Veuillez entrer un ID valide !\n");
         return;
     }
 
-    
+    // Créer une boîte de dialogue de confirmation
     GtkWidget *dialog;
     dialog = gtk_message_dialog_new(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(objet_graphique))),
                                     GTK_DIALOG_MODAL,
@@ -1348,7 +1443,206 @@ on_IBbuttonnon_clicked                 (GtkButton       *button,
 {
  printf("Non");
 }
-*/
+
+
+
+
+void
+on_IBbuttonAfficherA_clicked           (GtkWidget        *objet,
+                                        gpointer         user_data)
+{
+
+GtkTreeViewColumn *column;
+    GtkCellRenderer *renderer;
+    GtkListStore *store;
+    GtkWidget *treeviewliste;
+    GtkWidget *Service;
+
+    // Déclaration des données (exemple de données statiques pour démonstration)
+    int id = 14450308;
+    const char *nom = "ibtihel";
+    const char *description = "lavage";
+    const char *prix = "20";
+    int disponibilite = 1;
+
+    // Récupérer le widget "service"
+    Service = lookup_widget(objet, "Service");
+    if (!Service) {
+        g_warning("Widget 'service' introuvable.");
+        return;
+    }
+
+    // Récupérer le TreeView "treeviewliste"
+    treeviewliste = lookup_widget(Service, "treeviewliste");
+    if (!treeviewliste) {
+        g_warning("Widget 'treeviewliste' introuvable.");
+        return;
+    }
+
+    // Créer le modèle
+    store = gtk_list_store_new(5, G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
+
+    // Ajouter des données au modèle
+    GtkTreeIter iter;
+    gtk_list_store_append(store, &iter);
+    gtk_list_store_set(store, &iter,
+                       0, id,
+                       1, nom,
+                       2, description,
+                       3, prix,
+                       4, disponibilite,
+                       -1);
+
+    // Vérifier si des colonnes existent déjà
+    if (gtk_tree_view_get_columns(GTK_TREE_VIEW(treeviewliste)) == 0) {
+        // Ajouter des colonnes au TreeView
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("ID", renderer, "text", 0, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(treeviewliste), column);
+
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("Nom", renderer, "text", 1, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(treeviewliste), column);
+
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("Description", renderer, "text", 2, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(treeviewliste), column);
+
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("Prix", renderer, "text", 3, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(treeviewliste), column);
+
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("Disponibilité", renderer, "text", 4, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(treeviewliste), column);
+    }
+
+    // Associer le modèle au TreeView
+    gtk_tree_view_set_model(GTK_TREE_VIEW(treeviewliste), GTK_TREE_MODEL(store));
+
+    // Détruire le modèle après utilisation
+    g_object_unref(store);
+
+    g_print("Les services ont été affichés avec succès.\n");
+
+}
+
+
+void
+on_IBbuttonActualiser_clicked          (GtkWidget        *objet,
+                                        gpointer         user_data)
+{
+GtkWidget *Service;
+    GtkWidget *treeviewliste;
+
+    // Trouver le widget "service"
+    Service = lookup_widget(objet, "Service");
+    if (!Service) {
+        g_warning("Widget 'Service' introuvable.");
+        return;
+    }
+
+    // Obtenir le TreeView pour l'affichage
+    treeviewliste = lookup_widget(Service, "treeviewliste");
+    if (!treeviewliste) {
+        g_warning("Widget 'treeviewliste' introuvable dans 'Service'.");
+        return;
+    }
+
+    // Appeler la fonction pour afficher les services
+    afficher_services(GTK_TREE_VIEW(treeviewliste)); // Modifier afficher_services pour accepter GtkTreeView
+    g_print("L'affichage des services a été actualisé.\n");
+}
+
+
+
+
+
+
+
+
+
+
+
+void
+on_treeviewliste_row_activated         (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data)
+{
+
+	GtkTreeIter iter;
+	gint* id;
+	gchar* nom;
+	gchar* description;
+	gint* prix;
+	gchar* disponibilite;
+	service s;
+
+	GtkTreeModel *model = gtk_tree_view_get_model(treeview);
+
+	if (gtk_tree_model_get_iter(model, &iter, path)){
+
+       		gtk_tree_model_get (GTK_LIST_STORE(model), &iter, 0,&id, 1, &nom, 2, &description, 3, &prix, 4, &disponibilite, -1);
+	strcpy(s.id,id);
+	strcpy(s.nom,nom);
+	strcpy(s.description,description);
+        strcpy(s.prix,prix);
+	if(selected ==1 )
+	{
+	   strcpy(s.disponibilite,"Disponible");
+	}	
+	else if(selected ==2){
+	   strcpy(s.disponibilite,"Non disponible");
+        g_print("%d %s %s %d %s\n",s.id , s.nom ,s.description,s.prix, s.disponibilite );
+
+        }
+}
+}
+
+
+
+void
+on_IBbuttonRetour_clicked              (GtkWidget       *objet,
+                                        gpointer         user_data)
+{
+   GtkWidget *Service;
+
+Service=lookup_widget(objet,"Service");
+gtk_widget_destroy(Service);
+Service=create_Service();
+gtk_widget_show(Service);
+}
+
+void
+on_IBbuttonconfirmer_clicked           (GtkWidget      *objet_graphique,
+                                        gpointer         user_data)
+{
+char Citoyen[100];
+char id_reservation[100];
+char service[100];
+
+	GtkWidget *labelCitoyenS;
+	GtkWidget *labelid_reservationS;
+	GtkWidget *labelService;
+
+
+	labelCitoyenS = lookup_widget(objet_graphique,"entryCItoyen"); 
+
+	labelid_reservationS = lookup_widget(objet_graphique,"entryid_reservationS");
+
+labelService=lookup_widget(objet_graphique,"comboboxServices");
+	
+
+	strcpy(Citoyen ,gtk_entry_get_text(GTK_ENTRY(labelCitoyenS)));
+
+	strcpy(id_reservation ,gtk_entry_get_text(GTK_ENTRY(labelid_reservationS)));
+
+         g_print("%s %s %s \n",Citoyen , id_reservation ,service);
+
+strcpy(service,gtk_combo_box_get_active_text(GTK_COMBO_BOX(labelService)));
+}
+
 
 // ---------------------------------------------------------------------------------
 // TAKWA WERGHEMMI:
