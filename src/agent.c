@@ -1,481 +1,345 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "agent.h"
-#include <gtk/gtk.h>
+#include <string.h>
 
-enum {
-    ECIN,
-    ENOM,
-    EPRENOM,
-    ESEXE,
-    ENAISSANCE,
-    EEMAIL,
-    EADRESSE,
-    ESERVICE,
-    COLUMNS // Nombre total de colonnes
+#define MAX_HORAIRE_LEN 200
+enum A {
+    CIN_AGENT,
+    NOM,
+    PRENOM,
+    EMAIL,
+    SEXE,
+    SERVICE,
+    ID_PARKING,
+    NUM_TEL,
+    ADRESSE,
+    COLUMNS
 };
-enum {
-    EIDRES,
-    EJOURS,
-    EMOIS,
-    EANNEE,
-    EDUREE,
-    ECOLUMNS
+enum B {
+    ID_PARKINGR,
+    DATER,
+    DEPART,
+    DUREE,
+    SERVICE_CHOISI,
+    EMPLACEMENT,
+    MATRICULE,
+    RCOLUMNS
 };
+// Fonction pour définir le sexe
 
-// Ajouter un agent
-int ajouter(char *filename, Agent agent) {
-    FILE *f = fopen(filename, "a");
-    if (f == NULL) return 0;
-    fprintf(f, "%d %s %s %s %d %d %d %s %s %s\n", 
-            agent.CIN, agent.nom, agent.prenom, agent.sexe,
-            agent.jour_naissance, agent.mois_naissance, agent.annee_naissance,
-            agent.email, agent.adresse, agent.service);
-    fclose(f);
-    return 1;
-}
+// Ajout du sexe dans le fichier agent.txt
+//void ajout_sexe(int sexe, char *msg) {
+   // char sexe_msg[50];
+    
+    //if (sexe == 1) 
+       // strcpy(sexe_msg, "Homme");
+    // else if (sexe == 2) 
+      //  strcpy(sexe_msg, "Femme");
+    
 
-// Modifier un agent
-int modifier(char *filename, int CIN, Agent new_agent) {
-    FILE *f = fopen(filename, "r");
-    FILE *temp = fopen("temp.txt", "w");
-    if (f == NULL || temp == NULL) return 0;
+   
+//}
 
-    Agent a;
-    int found = 0;
 
-    while (fscanf(f, "%d %49s %49s %9s %d %d %d %99s %99s %49s\n", 
-                  &a.CIN, a.nom, a.prenom, a.sexe, 
-                  &a.jour_naissance, &a.mois_naissance, &a.annee_naissance, 
-                  a.email, a.adresse, a.service) != EOF) {
-        if (a.CIN == CIN) {
-            fprintf(temp, "%d %s %s %s %d %d %d %s %s %s\n", 
-                    new_agent.CIN, new_agent.nom, new_agent.prenom, new_agent.sexe,
-                    new_agent.jour_naissance, new_agent.mois_naissance, new_agent.annee_naissance,
-                    new_agent.email, new_agent.adresse, new_agent.service);
-            found = 1;
-        } else {
-            fprintf(temp, "%d %s %s %s %d %d %d %s %s %s\n", 
-                    a.CIN, a.nom, a.prenom, a.sexe,
-                    a.jour_naissance, a.mois_naissance, a.annee_naissance,
-                    a.email, a.adresse, a.service);
-        }
-    }
 
-    fclose(f);
-    fclose(temp);
 
-    if (found) {
-        remove(filename);
-        rename("temp.txt", filename);
+//void ajout_sexe(int sexe , char *msg) {
+ //   if (sexe == 1) 
+      //  strcpy(msg, "Homme");
+  //  else if (sexe == 2) 
+      //  strcpy(msg, "Femme");
+//}
+
+// Fonction pour ajouter un agent dans un fichier
+void ajouter_agent(char *file_agent, agent agt) {
+    // Ouvrir le fichier en mode ajout
+    FILE *f = fopen(file_agent, "a");
+    if (f!=NULL)
+{
+   
+        // Écrire les informations de l'agent dans le fichier
+        fprintf(f, "%s %s %s %s %s %s %s %s %s\n", 
+                agt.CIN, 
+                agt.nom, 
+                agt.prenom, 
+                agt.email, 
+                agt.sexe, 
+                agt.service, 
+                agt.ID_Parking, 
+                agt.num_tel, 
+                agt.adresse);
+        fclose(f); // Fermer le fichier
     } else {
-        remove("temp.txt");
+        // Si le fichier ne peut pas être ouvert, afficher un message d'erreur
+        fprintf(stderr, "Erreur lors de l'ouverture du fichier %s\n", file_agent);
     }
-
-    return found;
 }
 
-// Supprimer un agent
-int supprimer(char *filename, int CIN) {
-    FILE *f = fopen(filename, "r");
-    FILE *temp = fopen("temp.txt", "w");
-    if (f == NULL || temp == NULL) return 0;
 
-    Agent a;
+int modifier_agent(char *file_agent, char *CIN, agent n_file_agent) {
     int found = 0;
+    agent agt;
+    
+    
+    FILE *f = fopen(file_agent, "r");
+    
+    FILE *f2 = fopen("n_file_agent.txt", "w");
 
-    while (fscanf(f, "%d %49s %49s %9s %d %d %d %99s %99s %49s\n", 
-                  &a.CIN, a.nom, a.prenom, a.sexe, 
-                  &a.jour_naissance, &a.mois_naissance, &a.annee_naissance, 
-                  a.email, a.adresse, a.service) != EOF) {
-        if (a.CIN != CIN) {
-            fprintf(temp, "%d %s %s %s %d %d %d %s %s %s\n", 
-                    a.CIN, a.nom, a.prenom, a.sexe,
-                    a.jour_naissance, a.mois_naissance, a.annee_naissance,
-                    a.email, a.adresse, a.service);
-        } else {
-            found = 1;
-        }
-    }
-
-    fclose(f);
-    fclose(temp);
-
-    if (found) {
-        remove(filename);
-        rename("temp.txt", filename);
-    } else {
-        remove("temp.txt");
-    }
-
-    return found;
-}
-
-// Rechercher un agent
-Agent chercher(char *filename, int CIN) {
-    FILE *f = fopen(filename, "r");
-    Agent a;
-    a.CIN = -1; // Valeur par défaut indiquant que l'agent n'est pas trouvé.
-
-    if (f != NULL) {
-        while (fscanf(f, "%d %49s %49s %9s %d %d %d %99s %99s %49s\n", 
-                      &a.CIN, a.nom, a.prenom, a.sexe, 
-                      &a.jour_naissance, &a.mois_naissance, &a.annee_naissance, 
-                      a.email, a.adresse, a.service) != EOF) {
-            if (a.CIN == CIN) {
-                fclose(f);
-                return a; // Retourne l'agent trouvé.
+    if (f != NULL && f2 != NULL) {
+      
+        while (fscanf(f, "%s %s %s %s %s %s %s %s %s\n", agt.CIN, agt.nom, agt.prenom, agt.email, agt.sexe, agt.service, agt.ID_Parking, agt.num_tel, agt.adresse) != EOF) {
+            
+            if (strcmp(agt.CIN, CIN) == 0) {
+                fprintf(f2, "%s %s %s %s %s %s %s %s %s\n", n_file_agent.CIN, n_file_agent.nom, n_file_agent.prenom, n_file_agent.email, n_file_agent.sexe, n_file_agent.service, n_file_agent.ID_Parking, n_file_agent.num_tel, n_file_agent.adresse);
+                found = 1;
+            } else {
+                
+                fprintf(f2, "%s %s %s %s %s %s %s %s %s\n", agt.CIN, agt.nom, agt.prenom, agt.email, agt.sexe, agt.service, agt.ID_Parking, agt.num_tel, agt.adresse);
             }
         }
+        
         fclose(f);
-    }
+        fclose(f2);
 
-    // Si aucun agent n'a été trouvé, la valeur par défaut est retournée.
-    return a;
+       
+        if (found) {
+            remove(file_agent);
+            rename("n_file_agent.txt", file_agent);   
+        } else {
+            
+            remove("n_file_agent.txt");
+        }
+    }
+    
+    return found;  
 }
-int pull( int recid,char tel[9]){
-   FILE *f = fopen("add.txt", "r");
-    if (f != NULL)
+
+//Fonction chercher :
+agent chercher_Agent(char *filename,  char *CIN){	
+
+    agent agt;
+    FILE  *f=fopen(filename, "r");
+    if(f!=NULL)
     {
-        fscanf(f, "%d",&recid);
-        fclose(f);
-    }
-	remove("add.txt");
-	return recid;
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   void afficherListeTrieeParReservations(const char *filename) {
-    FILE *f = fopen(filename, "r");
-    if (f == NULL) {
-        printf("Erreur lors de l'ouverture du fichier des réservations.\n");
-        return;
-    }
-
-    reservation resList[MAX_RESERVATIONS];
-    int count = 0;
-    reservation res;
-
-    // Lire les données des réservations
-    while (fscanf(f, "%s %d %d %d %d\n", res.idres, &res.jours, &res.mois, &res.annee, &res.duree) != EOF) {
-        resList[count++] = res;
-    }
-    fclose(f);
-
-    // Trier les réservations par durée décroissante
-    for (int i = 0; i < count - 1; i++) {
-        for (int j = i + 1; j < count; j++) {
-            if (resList[i].duree < resList[j].duree) {
-                reservation temp = resList[i];
-                resList[i] = resList[j];
-                resList[j] = temp;
-            }
+        while(fscanf(f,"%s %s %s %s %s %s %s %s %s\n", agt.CIN, agt.nom, agt.prenom, agt.email, agt.sexe, agt.service, agt.ID_Parking,agt.num_tel,agt.adresse)!=EOF)
+        {
+            if( strcmp(agt.CIN,CIN)==0){
+                fclose(f);
+		return agt;
         }
     }
-
-    // Afficher ou écrire dans un fichier
-    FILE *sortedFile = fopen("reservations_triees.txt", "w");
-    if (sortedFile == NULL) {
-        printf("Erreur lors de l'ouverture du fichier de sortie.\n");
-        return;
-    }
-
-    for (int i = 0; i < count; i++) {
-        fprintf(sortedFile, "%s %d/%d/%d %d jours\n",
-                resList[i].idres, resList[i].jours, resList[i].mois, resList[i].annee, resList[i].duree);
-    }
-
-    fclose(sortedFile);
-    printf("Liste des réservations triée enregistrée dans 'reservations_triees.txt'.\n");
+    fclose(f);
 }
-void afficher_lsttree(GtkWidget *liste, char service[]) {
+        strcpy(agt.CIN,"-1");
+    
+	return agt;
+}
+
+//Fonction reservation : 
+
+void reservation(char *filename, char ID_Parking[]) {
+char ID_Parkingr[100], dater[50], Depart[20], duree[20], service_choisi[20], emplacement[20], matricule[20];
+
+
+	FILE *f = fopen(filename,"r");
+	FILE *f2 = fopen("reservation.txt","w");
+
+	if (f!= NULL &&f2!= NULL) {
+		while (fscanf (f,"%s %s %s %s %s %s %s\n ",ID_Parkingr,dater,Depart,duree,service_choisi,emplacement,matricule)!=EOF){
+			if(strcmp(dater,dater)==0) {
+				fprintf(f2,"%s %s %s %s %s %s %s\n ",ID_Parkingr,dater,Depart,duree,service_choisi,emplacement,matricule);
+}
+}
+		fclose(f);
+		fclose(f2);
+}
+
+
+}
+
+//Fonction afficher :
+void afficherAgents(GtkWidget *liste, char *filename) {
     GtkCellRenderer *renderer;
     GtkTreeViewColumn *column;
-    GtkTreeIter iter;
     GtkListStore *store;
+    GtkTreeIter iter;
+    agent ag;
 
-    int CIN;
-    char nom[MAX_NOM_LEN], prenom[MAX_PRENOM_LEN], sexe[MAX_SEXE_LEN];
-    int jour_naissance, mois_naissance, annee_naissance;
-    char email[MAX_EMAIL_LEN], adresse[MAX_ADRESSE_LEN], agent_service[MAX_SERVICE_LEN];
-    store = NULL;
-
-    FILE *f;
-    store = gtk_tree_view_get_model(liste);
+    store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(liste)));
 
     if (store == NULL) {
-        // Colonne CIN
+        
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("CIN", renderer, "text", ECIN, NULL);
+        column = gtk_tree_view_column_new_with_attributes("CIN", renderer, "text", CIN_AGENT, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
-        // Colonne Nom
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Nom", renderer, "text", ENOM, NULL);
+        column = gtk_tree_view_column_new_with_attributes("nom", renderer, "text", NOM, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
-        // Colonne Prénom
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Prénom", renderer, "text", EPRENOM, NULL);
+        column = gtk_tree_view_column_new_with_attributes("prenom", renderer, "text", PRENOM, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
-        // Colonne Sexe
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Sexe", renderer, "text", ESEXE, NULL);
+        column = gtk_tree_view_column_new_with_attributes("email", renderer, "text", EMAIL, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
-        // Colonne Date de naissance
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Naissance", renderer, "text", ENAISSANCE, NULL);
+        column = gtk_tree_view_column_new_with_attributes("sexe", renderer, "text", SEXE, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
-        // Colonne Email
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Email", renderer, "text", EEMAIL, NULL);
+        column = gtk_tree_view_column_new_with_attributes("service", renderer, "text", SERVICE, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
-        // Colonne Adresse
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Adresse", renderer, "text", EADRESSE, NULL);
+        column = gtk_tree_view_column_new_with_attributes("ID_Parking", renderer, "text", ID_PARKING, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
-        // Colonne Service
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Service", renderer, "text", ESERVICE, NULL);
+        column = gtk_tree_view_column_new_with_attributes("num_tel", renderer, "text", NUM_TEL, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
-    }
 
-    store = gtk_list_store_new(COLUMNS,
-                               G_TYPE_INT,    // CIN
-                               G_TYPE_STRING, // Nom
-                               G_TYPE_STRING, // Prénom
-                               G_TYPE_STRING, // Sexe
-                               G_TYPE_STRING, // Naissance (formatée)
-                               G_TYPE_STRING, // Email
-                               G_TYPE_STRING, // Adresse
-                               G_TYPE_STRING  // Service
-    );
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("adresse", renderer, "text", ADRESSE, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
-    f = fopen("agents.txt", "r");
-    if (f == NULL) {
-        printf("Erreur lors de l'ouverture du fichier des agents.\n");
-        return;
-    }
+       
+        store = gtk_list_store_new(COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
-    while (fscanf(f, "%d %s %s %s %d %d %d %s %s %s\n", &CIN, nom, prenom, sexe,
-                  &jour_naissance, &mois_naissance, &annee_naissance, email, adresse, agent_service) != EOF) {
-        // Filtrer les agents par service si nécessaire
-        if (strlen(service) == 0 || strcmp(service, agent_service) == 0) {
-            char naissance[15];
-            sprintf(naissance, "%02d/%02d/%04d", jour_naissance, mois_naissance, annee_naissance);
+       
+        FILE *f = fopen(filename, "r");
+        if (f != NULL) {
 
-            gtk_list_store_append(store, &iter);
-            gtk_list_store_set(store, &iter,
-                               ECIN, CIN,
-                               ENOM, nom,
-                               EPRENOM, prenom,
-                               ESEXE, sexe,
-                               ENAISSANCE, naissance,
-                               EEMAIL, email,
-                               EADRESSE, adresse,
-                               ESERVICE, agent_service,
-                               -1);
+            while (fscanf(f, "%s %s %s %s %s %s %s %s %s\n", ag.CIN, ag.nom, ag.prenom, ag.email, ag.sexe, ag.service, ag.ID_Parking, ag.num_tel, ag.adresse) != EOF) {
+                gtk_list_store_append(store, &iter);
+                gtk_list_store_set(store, &iter,
+                    CIN_AGENT, ag.CIN,
+                    NOM, ag.nom,
+                    PRENOM, ag.prenom,
+                    EMAIL, ag.email,
+                    SEXE, ag.sexe,
+                    SERVICE, ag.service,
+                    ID_PARKING, ag.ID_Parking,
+                    NUM_TEL, ag.num_tel,
+                    ADRESSE, ag.adresse,
+                    -1);
+            }
+            fclose(f);
         }
     }
 
-    fclose(f);
-
+   
     gtk_tree_view_set_model(GTK_TREE_VIEW(liste), GTK_TREE_MODEL(store));
     g_object_unref(store);
 }
 
-void supprimer_agttree(Agent a, char service[]) {
-    int CIN;
-    char nom[MAX_NOM_LEN], prenom[MAX_PRENOM_LEN], sexe[MAX_SEXE_LEN];
-    int jour_naissance, mois_naissance, annee_naissance;
-    char email[MAX_EMAIL_LEN], adresse[MAX_ADRESSE_LEN], agent_service[MAX_SERVICE_LEN];
-
-    Agent temp;
-    FILE *f, *g;
-
-    f = fopen("agents.txt", "r");
-    g = fopen("temp.txt", "w");
-
-    if (f == NULL || g == NULL) {
-        printf("Erreur lors de l'ouverture des fichiers.\n");
-        return;
+/////////////////////
+int supprimer_agent(char *file_agent, char CIN[]) {
+    int tr = 0;
+    agent agt;
+    
+    FILE *f = fopen(file_agent, "r");
+    FILE *f2 = fopen("n_agent.txt", "w");
+    
+    if (f == NULL || f2 == NULL) {
+        printf("Erreur d'ouverture des fichiers.\n");
+        return tr;
     }
-
-    while (fscanf(f, "%d %s %s %s %d %d %d %s %s %s\n",
-                  &temp.CIN, temp.nom, temp.prenom, temp.sexe,
-                  &temp.jour_naissance, &temp.mois_naissance, &temp.annee_naissance,
-                  temp.email, temp.adresse, temp.service) != EOF) {
-        // Vérification des critères pour ne pas écrire l'agent à supprimer
-        if (a.CIN != temp.CIN ||
-            strcmp(a.nom, temp.nom) != 0 ||
-            strcmp(a.prenom, temp.prenom) != 0 ||
-            strcmp(a.sexe, temp.sexe) != 0 ||
-            a.jour_naissance != temp.jour_naissance ||
-            a.mois_naissance != temp.mois_naissance ||
-            a.annee_naissance != temp.annee_naissance ||
-            strcmp(a.email, temp.email) != 0 ||
-            strcmp(a.adresse, temp.adresse) != 0 ||
-            strcmp(a.service, temp.service) != 0) {
-            fprintf(g, "%d %s %s %s %d %d %d %s %s %s\n",
-                    temp.CIN, temp.nom, temp.prenom, temp.sexe,
-                    temp.jour_naissance, temp.mois_naissance, temp.annee_naissance,
-                    temp.email, temp.adresse, temp.service);
+    
+    while (fscanf(f, "%s %s %s %s %s %s %s %s %s\n", agt.CIN, agt.nom, agt.prenom, agt.email, agt.sexe, agt.service, agt.ID_Parking,agt.num_tel,agt.adresse) != EOF) {
+        if (strcmp(agt.CIN, CIN) == 0) {
+            
+            tr = 1;  
+        } else {
+            
+            fprintf(f2, "%s %s %s %s %s %s %s %s %s\n", agt.CIN, agt.nom, agt.prenom, agt.email, agt.sexe, agt.service, agt.ID_Parking,agt.num_tel,agt.adresse);
         }
     }
-
+    
     fclose(f);
-    fclose(g);
-
-    // Remplacement du fichier original par le fichier temporaire
-    remove("agents.txt");
-    rename("temp.txt", "agents.txt");
+    fclose(f2);
+    
+    if (tr) {
+        remove(file_agent);  
+        rename("n_agent.txt", file_agent);  
+    } else {
+        remove("n_agent.txt");
+        printf("Agent avec CIN %s non trouvé.\n", CIN);
+    }
+return tr;
 }
-void afficher_agttree(GtkWidget *liste) {
+//////////////////////////////////
+
+
+// Fonction pour vérifier et nettoyer les chaînes non-UTF-8
+void afficherReservations(GtkWidget *liste, char *filename) {
     GtkCellRenderer *renderer;
     GtkTreeViewColumn *column;
-    GtkTreeIter iter;
     GtkListStore *store;
-
-    int CIN;
-    char nom[MAX_NOM_LEN];
-    char prenom[MAX_PRENOM_LEN];
-    char service[MAX_SERVICE_LEN];
-
-    store = NULL;
-
-    FILE *f;
-    store = gtk_tree_view_get_model(liste);
-
-    // Si le modèle est NULL, initialisez les colonnes
-    if (store == NULL) {
-        renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("CIN", renderer, "text", ECIN, NULL);
-        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
-
-        renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Nom", renderer, "text", ENOM, NULL);
-        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
-
-        renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Prénom", renderer, "text", EPRENOM, NULL);
-        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
-
-        renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Service", renderer, "text", ESERVICE, NULL);
-        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
-    }
-
-    // Définir le modèle de données pour l'arbre
-    store = gtk_list_store_new(ECOLUMNS, G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-
-    f = fopen("agents.txt", "r");
-    if (f == NULL) {
-        return;
-    } else {
-        // Lire le fichier ligne par ligne et remplir le modèle GTK
-        while (fscanf(f, "%d %s %s %*s %*d %*d %*d %*s %*s %s\n",
-                      &CIN, nom, prenom, service) != EOF) {
-            gtk_list_store_append(store, &iter);
-            gtk_list_store_set(store, &it
-
-}
-void afficher_reservationtree(GtkWidget *liste) {
-    GtkCellRenderer *renderer;
-    GtkTreeViewColumn *column;
     GtkTreeIter iter;
-    GtkListStore *store;
+    reservations res;
 
-    char idres[20];
-    int jours;
-    int mois;
-    int annee;
-    int duree;
+    store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(liste)));
 
-    store = NULL;
-
-    FILE *f;
-    store = gtk_tree_view_get_model(liste);
-
-    // Initialiser les colonnes si elles n'existent pas
     if (store == NULL) {
+        
+        
+
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("ID Réservation", renderer, "text", EIDRES, NULL);
+        column = gtk_tree_view_column_new_with_attributes("dater", renderer, "text", DATER, NULL);
+
+        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
+renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("ID_Parkingr", renderer, "text", ID_PARKINGR, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Jour", renderer, "text", EJOURS, NULL);
+        column = gtk_tree_view_column_new_with_attributes("Depart", renderer, "text", DEPART, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Mois", renderer, "text", EMOIS, NULL);
+        column = gtk_tree_view_column_new_with_attributes("duree", renderer, "text", DUREE, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Année", renderer, "text", EANNEE, NULL);
+        column = gtk_tree_view_column_new_with_attributes("service_choisi", renderer, "text", SERVICE_CHOISI, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes("Durée (jours)", renderer, "text", EDUREE, NULL);
+        column = gtk_tree_view_column_new_with_attributes("emplacement", renderer, "text", EMPLACEMENT, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
-    }
 
-    // Définir le modèle pour l'arbre
-    store = gtk_list_store_new(ECOLUMNS, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
+        renderer = gtk_cell_renderer_text_new();
+        column = gtk_tree_view_column_new_with_attributes("matricule", renderer, "text", MATRICULE, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(liste), column);
 
-    f = fopen("reservations.txt", "r");
-    if (f == NULL) {
-        return;
-    } else {
-        // Lire le fichier et remplir le modèle GTK
-        while (fscanf(f, "%s %d %d %d %d\n", idres, &jours, &mois, &annee, &duree) != EOF) {
-            gtk_list_store_append(store, &iter);
-            gtk_list_store_set(store, &iter,
-                               EIDRES, idres,
-                               EJOURS, jours,
-                               EMOIS, mois,
-                               EANNEE, annee,
-                               EDUREE, duree,
-                               -1);
-        }
-        fclose(f);
+       
+        store = gtk_list_store_new(RCOLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
-        // Appliquer le modèle à la vue
-        gtk_tree_view_set_model(GTK_TREE_VIEW(liste), GTK_TREE_MODEL(store));
-        g_object_unref(store);
-    }
-}
-void supprimer_reservationtree(reservation r) {
-    char idres[20];
-    int jours, mois, annee, duree;
-
-    reservation r2;
-
-    FILE *f, *g;
-    f = fopen("reservations.txt", "r");
-    g = fopen("dumb.txt", "w");
-
-    if (f == NULL || g == NULL) {
-        return;
-    } else {
-        while (fscanf(f, "%s %d %d %d %d\n", r2.idres, &r2.jours, &r2.mois, &r2.annee, &r2.duree) != EOF) {
-            // Conserver uniquement les lignes qui ne correspondent pas à la réservation à supprimer
-            if (strcmp(r.idres, r2.idres) != 0 || r.jours != r2.jours || r.mois != r2.mois || r.annee != r2.annee || r.duree != r2.duree) {
-                fprintf(g, "%s %d %d %d %d\n", r2.idres, r2.jours, r2.mois, r2.annee, r2.duree);
+        
+        FILE *f = fopen(filename, "r");
+        if (f != NULL) {
+           
+            while (fscanf(f, "%s %s %s %s %s %s %s\n", res.ID_Parkingr, res.dater, res.Depart, res.duree, res.service_choisi, res.emplacement, res.matricule) != EOF) {
+                gtk_list_store_append(store, &iter);
+                gtk_list_store_set(store, &iter,
+                    ID_PARKINGR, res.ID_Parkingr,
+                    DATER, res.dater,
+                    DEPART, res.Depart,
+                    DUREE, res.duree,
+                    SERVICE_CHOISI, res.service_choisi,
+                    EMPLACEMENT, res.emplacement,
+                    MATRICULE, res.matricule,
+                    -1);
             }
+            fclose(f);
         }
     }
 
-    fclose(f);
-    fclose(g);
-
-    // Remplacer le fichier d'origine par le fichier temporaire
-    remove("reservations.txt");
-    rename("dumb.txt", "reservations.txt");
+    
+    gtk_tree_view_set_model(GTK_TREE_VIEW(liste), GTK_TREE_MODEL(store));
+    g_object_unref(store);
 }
-
