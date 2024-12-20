@@ -464,634 +464,743 @@ on_AABAbuttonAGAnnuler_clicked         (GtkWidget       *widget,
 // ---------------------------------------------------------------------------------
 // NIDHAL GHANMI:
 // ---------------------------------------------------------------------------------
-/*
-#include"agent.h"
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 
-int supp=1;
-int choix[4]={0,0};
-int choix2[4]={0,0};
-char ch[500]="",cha[500]="";
+#include <gtk/gtk.h>
+
+#include "callbacks.h"
+#include "interface.h"
+#include "support.h"
+#include "agent.h"
+
+//done
+/*int confmod=0;
 void
-on_button_GR_clicked                   (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *EspaceAgent,*Listedesagents ;
-
-
-	EspaceAgent=lookup_widget(button,"EspaceAgent");
-	gtk_widget_destroy(EspaceAgent);
-	Listedesagents=create_Listedesagents();
-	gtk_widget_show(Listedesagents); 
-
-}
-
-
-void
-on_APT_clicked                         (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *Affichagelistedereservation,*EspaceAgent ;
-
-
-	EspaceAgent=lookup_widget(button,"EspaceAgent");
-	gtk_widget_destroy(EspaceAgent);
-	Affichagelistedereservation=create_Affichagelistedereservation();
-	gtk_widget_show(Affichagelistedereservation);
-}
-
-
-void
-on_Liste_A_row_activated          (GtkTreeView     *treeview,
-                                        GtkTreePath     *path,
-                                        GtkTreeViewColumn *column,
-                                        gpointer         user_data)
-{
-GtkTreeIter iter;
-	gint* CIN;
-	gint* nom;
-	gint* prenom
-	gint* jour;
-	gint* mois;
-	gint* annee;
-	gchar* tel;
-	gchar* sexe;	
-	gchar* adresse;
-	gchar* service;
-
-	
-	
-	rec r;
-	GtkTreeModel *model = gtk_tree_view_get_model (treeview) ;
-
-	if (gtk_tree_model_get_iter(model, &iter, path) ){
-
-		gtk_tree_model_get(GTK_LIST_STORE(model), &iter, 0, &CIN, 1, &jour, 2,&mois,3,&annee,4,&tel,5,&adresse,6,&email,7,&service,-1);
-		
-}
-}
-
-
-void
-on_button_M_clicked                    (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *ModificationA,*Listedesagents;
-
-
-	Listedesagents=lookup_widget(button,"Listedesagents");
-	gtk_widget_destroy(Listedesagents);
-	ModificationA=create_ModificationA();
-	gtk_widget_show(ModificationA); 
-}
-
-
-void
-on_button_Supp_clicked                 (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *Suppagt,*Listedesagents;
-
-
-	Listedesagents=lookup_widget(button,"Listedesagents");
-	gtk_widget_destroy(ListeA);
-	SuppAgt=create_SuppAgt();
-	gtk_widget_show(SuppAgt); 
-}
-
-void
-on_button1_Liste_a_reser_clicked         (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *Listesdesagents,*Liste_A;
-	Liste_A = lookup_widget(button,"Listesdesagents");
-	Listesdesagents=lookup_widget(Listesdesagents,"Liste_A");
-	 afficher_agent (Liste_A,ch);
-}
-void
-on_button_Ajouter_clicked              (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *AjouterAgent,*Listedesagents ;
-
-
-	Listedesagents=lookup_widget(button,"Listedesagents");
-	gtk_widget_destroy(Listedesagents);
-	AjouterAgent=create_Ajouteragent();
-	gtk_widget_show(AjouterAgent); 
-
-}
-void
-on_home1_clicked                       (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *EspaceAgents,*Listedesagents ;
-	Listedesagents=lookup_widget(button,"Listedesagents");
-	gtk_widget_destroy(Listedesagents);
-	EspaceAgent=create_EspaceAgent();
-	gtk_widget_show(EspaceAgent);
-}
-
-
-void
-on_return1_clicked                     (GtkButton       *button,
+on_checkbutton1_toggled                (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
 
-	GtkWidget *EspaceAgent,*Listedesagents ;
-	GestionR=lookup_widget(button,"Listedesagents");
-	gtk_widget_destroy(Listedesagents);
-	EspaceAgent=create_EspaceAgent();
-	gtk_widget_show(EspaceAgent); 
-}
-void
-on_return2_clicked                     (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *Listedesagents,*ModificationA;
-	ModificationA=lookup_widget(button,"ModificationA");
-	gtk_widget_destroy(ModificationA);
-	Listedesagents=create_Listedesagents();
-	gtk_widget_show(Listedesagents);
-}
+	if(gtk_toggle_button_get_active(togglebutton))
+		confmod=1;
+	else
+		confmod=0;
 
-
-void
-on_home2_clicked                       (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *EspaceAgent,*ModificationA;
-	ModificationA=lookup_widget(button,"ModificationA");
-	gtk_widget_destroy(ModificationA);
-	EspaceAgent=create_EspaceAgent();
-	gtk_widget_show(EspaceAgent); 
-}
-void
-on_button_amod_clicked                 (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *ModificationA ,*Modificationagt;
-	GtkWidget *input1, *input2;
-	GtkWidget *output;
-	char vide[2] = "";
-	char mot1[50] = "introuvable";
-
-	
-	char service[10];int CIN;
-	agt a;
-
-	ModificationA=lookup_widget(button,"ModificationA");
-	input1 = lookup_widget(button, "entry5_nM");
-        input2 = lookup_widget(button, "spinbutton9_idMM");
-	output=lookup_widget(button,"label257_mo");
-
-	strcpy(tel,gtk_entry_get_text(GTK_ENTRY(input1)));
-	 recid =gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (input2));
-
-	 r = chercher("Agent.txt", CIN,sercice,ch);
-	if(strcmp(r.tel,"-1")!=0){
-	gtk_label_set_text(GTK_LABEL(output), vide);
-	add(recid,tel);
- 	    Modificationagt=create_Modificationagt();
-	    gtk_widget_show(Modificationagt);
-		gtk_widget_destroy(ModificationA);
-}
-   	else {   
-	gtk_label_set_text(GTK_LABEL(output), mot1);
-}
- }
-void
-on_return3_clicked                     (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *ModificationA,*Modificationagt;
-	Modificationagt=lookup_widget(button,"Modificationagt");
-	gtk_widget_destroy(Modificationagt);
-	ModificationA=create_ModificationA();
-	gtk_widget_show(ModificationA);
-}
-
-
-void
-on_home3_clicked                       (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *Espaceagent,*Modificationagt;
-	Modificationagt=lookup_widget(button,"Modificationagt");
-	gtk_widget_destroy(Modificationunrec);
-	EspaceAgent=create_EspaceAgent();
-	gtk_widget_show(EspaceAgent); 
-}
-
-
-void
-on_buttonm_A_clicked                 (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    char vide[2] = "";
-   char mot1[50] = "modifier avec succès";
-   char mot2[50] = "ECHEC de modif  ";
-	GtkWidget *output;
-
-reserid=pull(reserid,CIN[10]);
-
-GtkWidget *input1, *input2, *input3, *input4, *input5 , *input6, *input7;
-GtkWidget *Listedesagents,*ModificationAg;
-
-GtkWidget *ch1,*ch2,*ch3,*ch4;
-
-ModificationAg=lookup_widget(button,"ModificationAg");
-
-    input1 = lookup_widget(button, "combobox1_idM");
-    input2 = lookup_widget(button, "entry4_nMMM");
-    input3 = lookup_widget(button, "spinbutton5_ff");
-    input4 = lookup_widget(button, "spinbutton6_yy");
-    input5 = lookup_widget(button, "spinbutton9_uu");
-input6 = lookup_widget(button, "combobox2_AMM");	
-input7 = lookup_widget(button, "entry1_descnew");	
-
-ch1=lookup_widget(button,"checkbutton1_rec_mod");
-ch2=lookup_widget(button,"checkbutton2_rec_mod");
-ch3=lookup_widget(button,"checkbutton3_rec_mod");
-ch4=lookup_widget(button,"checkbutton4_rec_mod");
-output = lookup_widget(button, "label263_confrdvmb");
-
-	strcpy(v.desc,gtk_entry_get_text(GTK_ENTRY(input7)));
-	a.date.jour=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON (input3));
-	a.date.mois=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON (input4));
-	a.date.annee=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON (input5));
-	strcpy(r.reser,gtk_combo_box_get_active_text(GTK_COMBO_BOX (input6)));
-	strcpy(r.idreser,gtk_combo_box_get_active_text(GTK_COMBO_BOX (input1)));
-	strcpy(r.duree,gtk_entry_get_text(GTK_ENTRY(input2)));
-
-
-
-         a=modifier("agent.txt", tel,recid,v,cha,ch,choix2);
-       if(a==1){
-	afficherListedereservation("agent.txt");
-    choix2[0]=0;
-    choix2[1]=0;
-    
-        gtk_spin_button_set_value(GTK_SPIN_BUTTON(input4), 1);
-        gtk_spin_button_set_value(GTK_SPIN_BUTTON(input5), 1);
-        gtk_spin_button_set_value(GTK_SPIN_BUTTON(input3), 1);
-                gtk_entry_set_text(GTK_ENTRY(input7), vide);
-                gtk_combo_box_set_active(GTK_COMBO_BOX (input1),0);
-                gtk_combo_box_set_active(GTK_COMBO_BOX (input6),0);
-                gtk_entry_set_text(GTK_ENTRY(input2), vide);
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ch1),FALSE);
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ch2),FALSE);
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ch3),FALSE);
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ch4),FALSE);
-        gtk_label_set_text(GTK_LABEL(output), mot1); 
-    }
-	else { 
-		gtk_label_set_text(GTK_LABEL(output), mot2); 
-}
-		
-
-}
-void
-on_checkbutton2_rdv_mod_toggled        (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-if(gtk_toggle_button_get_active(togglebutton)){
-choix2[1]=1;
-}
-}
-void
-on_checkbutton1_rdv_mod_toggled        (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-if(gtk_toggle_button_get_active(togglebutton)){
-choix2[0]=1;
-}
-}
-
-
-void
-on_home4_clicked                       (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *EspaceAgent,*Ajouteragent;
-	AjouterAgent=lookup_widget(button,"Ajouteragent");
-	gtk_widget_destroy(AjouterAgent);
-	EspaceAgent=create_EspaceAgent();
-	gtk_widget_show(EspaceAgent);
-}
-
-
-void
-on_return4_clicked                     (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *Listedesagents,*AjouterAgent;
-	AjouterAgent=lookup_widget(button,"AjouterAgent");
-	gtk_widget_destroy(AjouterAgent);
-	Listedesagents=create_Listedesagents();
-	gtk_widget_show(Listedesagents); 
-}
-
-
-void
-on_button_A_clicked                    (GtkButton       *button,
-                                        gpointer         user_data)
-{
- 
-	 char vide[2] = "";
-	char mot1[50] = "Ajout avec succès";
-   	 char mot2[50] = "ECHEC d'ajout  ";
-	GtkWidget *output;
-	GtkWidget *ch1,*ch2,*ch3,*ch4;
-
-
-	ch1=lookup_widget(button,"checkbutton5__A");
-	ch2=lookup_widget(button,"checkbutton6__A");
-	ch3=lookup_widget(button,"checkbutton7__A");
-	ch4=lookup_widget(button,"checkbutton8__A");
-	output = lookup_widget(button, "label256");
-
-    int a;
-    rec v;
-    GtkWidget *input1, *input2, *input3, *input4, *input5, *input6 ,*input7 ;
-    GtkWidget *Ajouteragent;
-
-    AjouterRec = lookup_widget(button, "Ajouteraent");
-    input1 = lookup_widget(button, "combobox1_Agent");
-    input2 = lookup_widget(button, "entry2");
-    input3 = lookup_widget(button, "spinbutton3");
-    input4 = lookup_widget(button, "spinbutton4");
-    input5 = lookup_widget(button, "spinbutton_Agent");
-    input6 = lookup_widget(button, "combobox2_AgentA");
-    input7 = lookup_widget(button, "entry_descA");
-	
-
-	strcpy(v.desc,gtk_entry_get_text(GTK_ENTRY(input7)));
-	a.date.jour=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON (input3));
-	a.date.mois=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON (input4));
-	a.date.annee=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON (input5));
-	strcpy(r.reservation,gtk_combo_box_get_active_text(GTK_COMBO_BOX (input1)));
-	strcpy(r.idreserv,gtk_combo_box_get_active_text(GTK_COMBO_BOX (input6)));
-	strcpy(r.,gtk_entry_get_text(GTK_ENTRY(input2)));
-
-
-     		a=ajouter("Agent.txt", v,choix,ch);
-		   if(a==1){
-	afficherListedereservation("Agent.txt");
-		choix[0]=0;
-		choix[1]=0;
-		
-		    gtk_spin_button_set_value(GTK_SPIN_BUTTON(input4), 1);
-		    gtk_spin_button_set_value(GTK_SPIN_BUTTON(input5), 1);
-		    gtk_spin_button_set_value(GTK_SPIN_BUTTON(input3), 1);
-                    gtk_entry_set_text(GTK_ENTRY(input7), vide);
-                    gtk_combo_box_set_active(GTK_COMBO_BOX (input1),0);
-                    gtk_combo_box_set_active(GTK_COMBO_BOX (input6),0);
-                    gtk_entry_set_text(GTK_ENTRY(input2), vide);
-		    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ch1),FALSE);
-		    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ch2),FALSE);
-		    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ch3),FALSE);
-		    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ch4),FALSE);
-   			gtk_label_set_text(GTK_LABEL(output), mot1);
-		      }
-	else { 
-		gtk_label_set_text(GTK_LABEL(output), mot2); 
-}
-}
-
-
-void
-on_home5_clicked                       (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *EspaceAgent,*SuppAgt;
-	SuppAgt=lookup_widget(button,"SuppAgt");
-	gtk_widget_destroy(SuppAgt);
-	EspaceAgent=create_EspaceAgent();
-	gtk_widget_show(EspaceAgent); 
-}
-
-
-void
-on_return5_clicked                     (GtkButton       *button,
-                                        gpointer         user_data)
-{
-
-	GtkWidget *Listedesagents,*SuppAgt;
-	SuppAgt=lookup_widget(button,"SuppAgt");
-	gtk_widget_destroy(SuppAgt);
-	Listedesagents=create_Listedesagents();
-	gtk_widget_show(Listedesagents);
-}
-void
-on_button_spr_clicked                (GtkButton       *button,
-                                        gpointer         user_data)
-{
-
-    char mot1[55] = "introuvable";
-char vide[2] = "";
-agt a;
-char service[9];int CIN;
-GtkWidget *input1,*input2;
-GtkWidget*output;
-GtkWidget *AssurerSuppAgt;
-GtkWidget *Suppagent;
-
-SuppRec=lookup_widget(button,"Suppagent");
-input1=lookup_widget(button,"entry3_teltel");
-    input2 = lookup_widget(button, "spinbutton8_oo");
-output=lookup_widget(button,"label259_supp");
-
-
-
-strcpy(tel,gtk_entry_get_text(GTK_ENTRY(input1)));
- recid = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (input2));
- r = chercher("Agent.txt", service,CIN,ch);
-if(strcmp(a.service,"-1")!=0){
-     AssurerSuppAgt=create_AssurerSuppAgt();
-    gtk_widget_show(AssurerSuppAgt);
-add(service,CIN);
-
-}
-	 else {
-		gtk_label_set_text(GTK_LABEL(output), mot1);
-}
-}
-
-
-void
-on_return6_clicked                     (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *AssurerSuppAgt,*Suppagent;
-	AssurerSuppAgt=lookup_widget(button,"AssurerSuppAgt");
-	gtk_widget_destroy(AssurerSuppAgt);
-	Suppagent=create_Suppagent();
-	gtk_widget_show(Suppagent); 
-}
-
-void
-on_radiobutton_A_toggled               (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton))){
-supp = 2;
-}
-}
-
-
-void
-on_radiobutton_supp_toggled            (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton))){
-supp = 1;
-}
-}
-
-
-void
-on_home6_clicked                       (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *AssurerSuppAgt,*EspaceAgent;
-	AssurerSuppAgt=lookup_widget(button,"AssurerSuppAgt");
-	gtk_widget_destroy(AssurerSuppAgt);
-	EspaceAgent=create_EspaceAgent();
-	gtk_widget_show(EspaceAgent);
-}
-
-
-void
-on_treeview1_tree_don_cin_row_activated
-                                        (GtkTreeView     *treeview,
-                                        GtkTreePath     *path,
-                                        GtkTreeViewColumn *column,
-                                        gpointer         user_data)
-{
-GtkTreeIter iter;
-	
-	gchar* reservation;	
-	gchar* CIN;
-	
-	rec r;
-	GtkTreeModel *model = gtk_tree_view_get_model (treeview) ;
-
-	if (gtk_tree_model_get_iter(model, &iter, path) ){
-
-		gtk_tree_model_get(GTK_LIST_STORE(model), &iter, 0,&duree,1,&,-1);
-	
-}
-}
-
-
-void
-on_return7_clicked                     (GtkButton       *button,
-                                        gpointer         user_data)
-{
-  	GtkWidget *Affichagelistedereservation,*EspaceAgent ;
-	Affichagelistedereservation=lookup_widget(button,"Affichagelistedereservation");
-	gtk_widget_destroy(Affichagelistedereservation);
-	EspaceAgent=create_EspaceAgent();
-	gtk_widget_show(EspaceAgent);
-}
-
-
-void
-on_home7_clicked                       (GtkButton       *button,
-                                        gpointer         user_data)
-{
-	GtkWidget *Affichagelistedereservation,*EspaceAgent ;
-	Affichagelistedereservation=lookup_widget(button,"Affichagelistedereservation");
-	gtk_widget_destroy(Affichagelistedereservation);
-	EspaceAgent=create_EspaceAgent();
-	gtk_widget_show(EspaceAgent);
-}
-
-
-void
-on_checkbutton5_rec_A_toggled          (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-if(gtk_toggle_button_get_active(togglebutton)){
-choix[0]=1;
-}
-}
-
-
-void
-on_checkbutton7_rec_A_toggled          (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-if(gtk_toggle_button_get_active(togglebutton)){
-choix[1]=1;
-}
-}
-
-
-void
-on_checkbutton6_A_toggled          (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-if(gtk_toggle_button_get_active(togglebutton)){
-choix[2]=1;
-}
-}
-
-
-void
-on_checkbutton8_rec_A_toggled          (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-if(gtk_toggle_button_get_active(togglebutton)){
-choix[3]=1;
-}
-}
-
-
-void
-on_checkbutton3_rec_mod_toggled        (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-if(gtk_toggle_button_get_active(togglebutton)){
-choix2[2]=1;}
-}
-
-
-void
-on_checkbutton4_rec_mod_toggled        (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-if(gtk_toggle_button_get_active(togglebutton)){
-choix2[3]=1;}
-}
-
-
-void
-on_button52_bb_clicked                 (GtkButton       *button,
-                                        gpointer         user_data)
-{
-         
-	GtkWidget *AssurerSuppagt;
-	GtkWidget *Suppagt;
-	char service[10];int agentcin;
-	agtcin=pull(agtcin,service[10]);
-	if(supp==1){
-	supprimer("Agent.txt",tel[9],recid,ch);}
-	AssurerSuppAgt=lookup_widget(button,"AssurerSuppAgt");
-	gtk_widget_destroy(AssurerSuppAgt);
-	supp =1;
-
-}
-void
-on_afficheragt_clicked                (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *Affichagelistedereservation,*treeview1_tree_par_tri;
-	Affichagelistedereservation = lookup_widget(button,"Affichagelistedereservation");
-	treeview1_tree_par_tri=lookup_widget(Affichagelistedereservation,"treeview1_tree_par_tri");
-	 afficher_rectree (treeview1_tree_par_tri);
 }
 */
+
+
+//int sexe = 0;
+
+//void
+//on_radiobutton1_toggled                (GtkToggleButton *togglebutton,
+                                     //   gpointer         user_data)
+//{
+// if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(togglebutton))) {
+       // sexe = 1; //homme
+   // }
+//}
+
+
+//void
+//on_radiobutton2_toggled                (GtkToggleButton *togglebutton,
+                                        //gpointer         user_data)
+//{
+//if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(togglebutton))) {
+        //sexe = 2; // femme
+  //  }
+
+//}
+
+
+
+
+// Fonction nbr ou non
+int is_number(const char *str) {
+    while (*str) {
+        if (*str < '0' || *str > '9') {
+            return 0; 
+        }
+        str++;
+    }
+    return 1; 
+}
+
+// controle de saisie CIN
+int validate_CIN(const char *cin) {
+    return (strlen(cin) == 8 ) && is_number(cin);
+}
+
+// controle de saisie telephone
+int validate_phone_number(const char *number) {
+    return strlen(number) == 8 && is_number(number);
+}
+// bouton ajouter
+
+
+void on_button1_clicked(GtkButton *button, gpointer user_data) {
+    GtkWidget *entry1, *entry2, *entry3, *entry4;
+    GtkWidget *entry5, *entry6, *combobox1, *combobox2,*combobox5;
+    agent a;
+    char msg[50];
+    char erreur[500];
+    gboolean valid = TRUE;
+
+    entry1 = lookup_widget(GTK_WIDGET(button), "entry1");//cin
+    entry2 = lookup_widget(GTK_WIDGET(button), "entry2");
+    entry3 = lookup_widget(GTK_WIDGET(button), "entry3");
+    entry4 = lookup_widget(GTK_WIDGET(button), "entry4");
+    combobox5 = lookup_widget(GTK_WIDGET(button), "combobox5"); //sexe
+    combobox1 = lookup_widget(GTK_WIDGET(button), "combobox1");
+    combobox2 = lookup_widget(GTK_WIDGET(button), "combobox2");
+    entry5 = lookup_widget(GTK_WIDGET(button), "entry5");
+    entry6 = lookup_widget(GTK_WIDGET(button), "entry6");
+   
+
+    strcpy(a.CIN, gtk_entry_get_text(GTK_ENTRY(entry1)));
+    strcpy(a.prenom, gtk_entry_get_text(GTK_ENTRY(entry2)));
+    strcpy(a.nom, gtk_entry_get_text(GTK_ENTRY(entry3)));
+    strcpy(a.email, gtk_entry_get_text(GTK_ENTRY(entry4)));
+    strcpy(a.sexe, gtk_combo_box_get_active_text(GTK_COMBO_BOX(combobox5)));
+    strcpy(a.service, gtk_combo_box_get_active_text(GTK_COMBO_BOX(combobox1)));
+
+    const gchar *active_text = gtk_combo_box_get_active_text(GTK_COMBO_BOX(combobox2));
+    if (active_text != NULL) {
+        strcpy(a.ID_Parking, active_text);
+    }
+
+    const gchar *tel_text = gtk_entry_get_text(GTK_ENTRY(entry5));
+    strcpy(a.num_tel, tel_text);
+
+    strcpy(a.adresse, gtk_entry_get_text(GTK_ENTRY(entry6)));
+
+if (strcmp(a.nom, "") == 0) {
+        strcat(erreur, "Le champ Nom est vide.\n");
+        valid = FALSE;
+    }
+    if (strcmp(a.prenom, "") == 0) {
+        strcat(erreur, "Le champ Prénom est vide.\n");
+        valid = FALSE;
+    }
+    if (strcmp(a.email, "") == 0) {
+        strcat(erreur, "Le champ Email est vide.\n");
+        valid = FALSE;
+    }
+
+   //msg erreur CIN
+    if (!validate_CIN(a.CIN) ) {
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(user_data), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Le CIN doit contenir 8");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        valid = FALSE;
+    }
+
+
+    // msg erreur tlf
+    if (!validate_phone_number(a.num_tel)) {
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(user_data), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Le numéro de téléphone doit contenir 8 chiffres.");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        valid = FALSE;
+    }
+
+
+ 
+   
+
+    
+
+    
+        //if (sexe == 1) {
+           // strcpy(msg, "Homme");
+       // } else {
+          //  strcpy(msg, "Femme");
+      //  }
+	
+	if (valid) {
+      
+        ajouter_agent("agent.txt", a); 
+	// msg succes
+	GtkWidget *success_dialog = gtk_message_dialog_new(GTK_WINDOW(user_data), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Agent ajouté avec succès !");
+gtk_dialog_run(GTK_DIALOG(success_dialog));
+gtk_widget_destroy(success_dialog);
+
+    }
+}
+
+
+//////////////////
+/*void on_button3_clicked(GtkButton *button, gpointer user_data) {
+    GtkWidget *input_CIN; 
+    GtkWidget *input_nom; 
+    GtkWidget *input_prenom;
+    GtkWidget *input_email;
+    GtkWidget *input_sexe;
+    GtkWidget *input_service; 
+    GtkWidget *input_ID_Parking;
+    GtkWidget *input_num_tel; 
+    GtkWidget *input_adresse; 
+    GtkWidget *dialog = NULL;
+
+    agent a; 
+    char erreur[500] = "";  
+    FILE *f = fopen("agent.txt", "a");
+    char CIN[20], nom[100], prenom[100], email[100]; 
+    char service[100], ID_Parking[100]; 
+    char num_tel[100], adresse[100];
+    int  tr=0;
+
+
+    
+    input_CIN = lookup_widget(GTK_WIDGET(button), "entry8");
+    input_nom = lookup_widget(GTK_WIDGET(button), "entry9");
+    input_prenom = lookup_widget(GTK_WIDGET(button), "entry10");
+    input_email = lookup_widget(GTK_WIDGET(button), "entry11");
+    input_service = lookup_widget(GTK_WIDGET(button), "combobox3");    
+    input_ID_Parking = lookup_widget(GTK_WIDGET(button), "combobox4"); 
+    input_num_tel = lookup_widget(GTK_WIDGET(button), "entry13");
+    input_adresse = lookup_widget(GTK_WIDGET(button), "entry12");
+
+    
+    strcpy(a.CIN, gtk_entry_get_text(GTK_ENTRY(input_CIN)));
+    a = chercher_Agent("agent.txt", a.CIN); 
+
+    
+    if (strcmp(a.CIN, "-1") != 0) {
+        strcpy(a.nom, gtk_entry_get_text(GTK_ENTRY(input_nom)));
+        strcpy(a.prenom, gtk_entry_get_text(GTK_ENTRY(input_prenom)));
+        strcpy(a.email, gtk_entry_get_text(GTK_ENTRY(input_email)));
+         strcpy(a.service, gtk_combo_box_get_active_text(GTK_COMBO_BOX(input_etatCivil))); 
+         strcpy(a.ID_Parking, gtk_combo_box_get_active_text(GTK_COMBO_BOX(input_ID_Parking)));
+        strcpy(a.num_tel, gtk_entry_get_text(GTK_ENTRY(input_num_tel)));         
+        strcpy(a.adresse, gtk_entry_get_text(GTK_ENTRY(input_horaires_travail)));
+
+        
+        if (strcmp(a.CIN, "") == 0) {
+            strcat(erreur, "Le champ CIN est vide\n");
+        }
+        if (strcmp(a.CIN, "-1") == 0) {
+            strcat(erreur, "CIN n'existe pas dans la base de données\n");
+        }
+
+        
+        if (strcmp(erreur, "") != 0) {
+            dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                           GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                           GTK_MESSAGE_WARNING, 
+                                           GTK_BUTTONS_OK, "%s", erreur); 
+            gtk_window_set_title(GTK_WINDOW(dialog), "Alerte");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+        } 
+        
+        
+             tr=modifier_agent("agent.txt", a.CIN, a);
+            if (tr) {
+                dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                               GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                               GTK_MESSAGE_INFO, 
+                                               GTK_BUTTONS_OK, 
+                                               "Modification réussie avec succès !");
+                gtk_window_set_title(GTK_WINDOW(dialog), "Succès");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
+            } else {
+                dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                               GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                               GTK_MESSAGE_WARNING, 
+                                               GTK_BUTTONS_OK, 
+                                               "Erreur lors de la modification !");
+                gtk_window_set_title(GTK_WINDOW(dialog), "Erreur");
+                gtk_dialog_run(GTK_DIALOG(dialog));
+                gtk_widget_destroy(dialog);
+            }
+        
+    } else {
+        dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                       GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                       GTK_MESSAGE_WARNING, 
+                                       GTK_BUTTONS_OK, 
+                                       "CIN introuvable dans la base de données");
+        gtk_window_set_title(GTK_WINDOW(dialog), "Erreur");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+    }
+}*/
+
+void on_button3_clicked(GtkButton *button, gpointer user_data) {
+    GtkWidget *input_CIN; 
+    GtkWidget *input_nom; 
+    GtkWidget *input_prenom;
+    GtkWidget *input_email;
+    GtkWidget *input_service; 
+    GtkWidget *input_ID_Parking;
+    GtkWidget *input_num_tel; 
+    GtkWidget *input_adresse; 
+    GtkWidget *dialog;
+    agent a; 
+    char erreur[500] = "";  
+    FILE *f = fopen("agent.txt", "a");
+    char CIN[20], nom[100], prenom[100], email[100]; 
+    char service[100], ID_Parking[100]; 
+    char num_tel[100], adresse[100];
+    int  tr = 0;
+
+    // Vérification de l'ouverture du fichier
+    if (f == NULL) {
+        strcat(erreur, "Erreur d'ouverture du fichier.\n");
+        dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                       GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                       GTK_MESSAGE_WARNING, 
+                                       GTK_BUTTONS_OK, "%s", erreur); 
+        gtk_window_set_title(GTK_WINDOW(dialog), "Alerte");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        return; // Arrêter la fonction si le fichier ne peut être ouvert
+    }
+
+    // Récupérer les widgets
+    input_CIN = lookup_widget(GTK_WIDGET(button), "entry8");
+    input_nom = lookup_widget(GTK_WIDGET(button), "entry9");
+    input_prenom = lookup_widget(GTK_WIDGET(button), "entry10");
+    input_email = lookup_widget(GTK_WIDGET(button), "entry11");
+    input_service = lookup_widget(GTK_WIDGET(button), "combobox3");    
+    input_ID_Parking = lookup_widget(GTK_WIDGET(button), "combobox4"); 
+    input_num_tel = lookup_widget(GTK_WIDGET(button), "entry13");
+    input_adresse = lookup_widget(GTK_WIDGET(button), "entry12");
+
+    // Initialiser dialog
+    dialog = NULL;
+
+    // Récupérer les valeurs des champs
+    strcpy(a.CIN, gtk_entry_get_text(GTK_ENTRY(input_CIN)));
+    a = chercher_Agent("agent.txt", a.CIN);
+
+    // Vérifier si l'agent a été trouvé
+    if (strcmp(a.CIN, "-1") == 0) {
+        strcat(erreur, "CIN introuvable dans la base de données\n");
+    }
+
+    // Si l'agent est trouvé, procéder à la modification
+    if (strcmp(a.CIN, "-1") != 0) {
+        strcpy(a.nom, gtk_entry_get_text(GTK_ENTRY(input_nom)));
+        strcpy(a.prenom, gtk_entry_get_text(GTK_ENTRY(input_prenom)));
+        strcpy(a.email, gtk_entry_get_text(GTK_ENTRY(input_email)));
+        
+        // Vérifier les valeurs des combobox
+        const char *serviceText = gtk_combo_box_get_active_text(GTK_COMBO_BOX(input_service));
+        if (serviceText != NULL) {
+            strcpy(a.service, serviceText);
+        } else {
+            strcat(erreur, "Service non sélectionné\n");
+        }
+
+        const char *ID_ParkingText = gtk_combo_box_get_active_text(GTK_COMBO_BOX(input_ID_Parking));
+        if (ID_ParkingText != NULL) {
+            strcpy(a.ID_Parking, ID_ParkingText);
+        } else {
+            strcat(erreur, "ID Parking non sélectionné\n");
+        }
+
+        strcpy(a.num_tel, gtk_entry_get_text(GTK_ENTRY(input_num_tel)));         
+        strcpy(a.adresse, gtk_entry_get_text(GTK_ENTRY(input_adresse)));
+
+        // Vérifier si CIN est vide
+        if (strcmp(a.CIN, "") == 0) {
+            strcat(erreur, "Le champ CIN est vide\n");
+        }
+
+        // Si des erreurs sont présentes, afficher un message d'erreur
+        if (strcmp(erreur, "") != 0) {
+            dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                           GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                           GTK_MESSAGE_WARNING, 
+                                           GTK_BUTTONS_OK, "%s", erreur); 
+            gtk_window_set_title(GTK_WINDOW(dialog), "Alerte");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+            return; // Arrêter la fonction si des erreurs existent
+        }
+
+        // Appeler la fonction pour modifier l'agent
+        tr = modifier_agent("agent.txt", a.CIN, a);
+
+        // Afficher le résultat de la modification
+        if (tr) {
+            dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                           GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                           GTK_MESSAGE_INFO, 
+                                           GTK_BUTTONS_OK, "Modification réussie avec succès !");
+            gtk_window_set_title(GTK_WINDOW(dialog), "Succès");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+        } else {
+            dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                           GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                           GTK_MESSAGE_WARNING, 
+                                           GTK_BUTTONS_OK, "Erreur lors de la modification !");
+            gtk_window_set_title(GTK_WINDOW(dialog), "Erreur");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+        }
+    } else {
+        // Si l'agent n'a pas été trouvé, afficher une erreur
+        dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                       GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                       GTK_MESSAGE_WARNING, 
+                                       GTK_BUTTONS_OK, "CIN introuvable dans la base de données");
+        gtk_window_set_title(GTK_WINDOW(dialog), "Erreur");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+    }
+
+    // Fermer le fichier
+    fclose(f);
+}
+
+
+
+
+void
+on_button2_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+    agent a;
+    char CIN[50];
+    GtkWidget *input_CIN;
+    input_CIN = lookup_widget(GTK_WIDGET(button), "entry7");
+    const gchar *CIN_const = gtk_entry_get_text(GTK_ENTRY(input_CIN));
+    
+    strcpy(CIN, gtk_entry_get_text(GTK_ENTRY(input_CIN)));
+
+    
+    GtkWidget *output_CIN, *output_nom, *output_prenom, *output_email, *output_service;
+    GtkWidget *output_ID_Parking, *output_num_tel, *output_adresse;
+    GtkWidget *dialog;
+
+    a = chercher_Agent("agent.txt", CIN);
+    output_CIN = lookup_widget(GTK_WIDGET(button), "entry8");
+    output_nom = lookup_widget(GTK_WIDGET(button), "entry9");
+    output_prenom = lookup_widget(GTK_WIDGET(button), "entry10");
+    output_email = lookup_widget(GTK_WIDGET(button), "entry11");
+   // output_service = lookup_widget(GTK_WIDGET(button), "combobox3"); 
+  //  output_ID_Parking = lookup_widget(GTK_WIDGET(button), "combobox4"); 
+    output_num_tel = lookup_widget(GTK_WIDGET(button), "entry13"); 
+    output_adresse = lookup_widget(GTK_WIDGET(button), "entry12");
+
+   
+    
+
+    
+    if (strcmp(a.CIN, "-1") != 0) {
+        
+        gtk_entry_set_text(GTK_ENTRY(output_CIN), a.CIN);
+        gtk_entry_set_text(GTK_ENTRY(output_nom), a.nom);
+        gtk_entry_set_text(GTK_ENTRY(output_prenom), a.prenom);
+        gtk_entry_set_text(GTK_ENTRY(output_email), a.email);
+ 	gtk_entry_set_text(GTK_ENTRY(output_num_tel), a.num_tel);
+        gtk_entry_set_text(GTK_ENTRY(output_adresse), a.adresse); 
+	
+
+    } 
+else {
+        
+dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                GTK_MESSAGE_WARNING,
+                                GTK_BUTTONS_OK,
+                                "CIN n'existe pas");
+        gtk_window_set_title(GTK_WINDOW(dialog), "Alerte");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+    }
+}
+
+
+
+
+
+
+
+int choice=1;
+void
+on_radiobutton3_toggled                (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(togglebutton))
+		choice=1;
+
+}
+
+
+void
+on_radiobutton4_toggled                (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(togglebutton))
+		choice=2;
+}
+
+
+void on_button4_clicked(GtkButton *button, gpointer user_data) {
+    if (choice == 1) {
+        char cin[50];
+        GtkWidget *input_CIN;
+        input_CIN = lookup_widget(GTK_WIDGET(button), "entry14");
+        strcpy(cin, gtk_entry_get_text(GTK_ENTRY(input_CIN)));
+
+        // Appeler la fonction pour supprimer l'agent
+        if (supprimer_agent("agent.txt", cin)) {
+            // Si la suppression est réussie, afficher un message de succès
+            GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(user_data),
+                                                       GTK_DIALOG_MODAL,
+                                                       GTK_MESSAGE_INFO,
+                                                       GTK_BUTTONS_OK,
+                                                       "Agent supprimé avec succès !");
+            gtk_window_set_title(GTK_WINDOW(dialog), "Succès");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+        } else {
+            // Si la suppression échoue (par exemple, agent non trouvé), afficher un message d'erreur
+            GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(user_data),
+                                                       GTK_DIALOG_MODAL,
+                                                       GTK_MESSAGE_WARNING,
+                                                       GTK_BUTTONS_OK,
+                                                       "L'agent n'a pas été trouvé dans la base de données !");
+            gtk_window_set_title(GTK_WINDOW(dialog), "Erreur");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+        }
+    }
+}
+
+void
+on_treeview1_row_activated             (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data)
+{
+
+	GtkTreeIter iter;
+	gchar *CIN;
+
+	GtkTreeModel *model = gtk_tree_view_get_model(treeview);
+	
+	if (gtk_tree_model_get_iter(model,&iter,path))
+	{
+		gtk_tree_model_get (model, &iter, 0, &CIN,-1);
+	
+		supprimer_agent("agent.txt",CIN);
+	
+        	
+	}
+
+
+}
+
+
+void
+on_button5_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+    GtkWidget *treeview, *Ajouter_N, *w_afficher;
+ 
+    Ajouter_N = lookup_widget(GTK_WIDGET(button), "Ajouter_N");
+      
+    gtk_widget_destroy(Ajouter_N);
+   
+    Ajouter_N = create_Ajouter_N();
+    
+    gtk_widget_show(Ajouter_N);
+    
+    w_afficher = lookup_widget(GTK_WIDGET(button), "afficherlisteagents");
+    
+    treeview = lookup_widget(w_afficher, "treeview1");
+
+    afficherAgents(treeview, "agent.txt");
+
+ 
+
+
+}
+
+
+void
+on_button12_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *Home,*Ajouter_N;
+Ajouter_N=lookup_widget(GTK_WIDGET(button),"Ajouter_N");
+gtk_widget_destroy(Ajouter_N);
+Home= create_Home();
+gtk_widget_show (Home);
+}
+
+
+void
+on_button13_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *Home,*modifier;
+modifier=lookup_widget(GTK_WIDGET(button),"modifier_N");
+gtk_widget_destroy(modifier);
+Home= create_Home();
+gtk_widget_show (Home);
+}
+
+
+void
+on_button14_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *Home,*supprimer_N;
+supprimer_N=lookup_widget(GTK_WIDGET(button),"supprimer_N");
+gtk_widget_destroy(supprimer_N);
+Home= create_Home();
+gtk_widget_show (Home);
+}
+
+
+void
+on_button15_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *Home,*afficherlisteagents;
+afficherlisteagents=lookup_widget(GTK_WIDGET(button),"afficherlisteagents");
+gtk_widget_destroy(afficherlisteagents);
+Home= create_Home();
+gtk_widget_show (Home);
+}
+
+
+void
+on_button6_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+//GtkWidget *treeview, *w, *w_afficher;
+ 
+   // w = lookup_widget(GTK_WIDGET(button), "");
+      
+   // gtk_widget_destroy(w);
+   
+   // w_ = create_();
+    
+  //  gtk_widget_show(w_);
+    
+  //  w_afficher = lookup_widget(GTK_WIDGET(button), "affichageressa");
+    
+   // treeview = lookup_widget(w_afficher, "treeview2");
+
+  //  afficherReservations(treeview, "reservation.txt");
+}
+
+
+void
+on_button16_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *Home,*afficherlistereservation;
+afficherlistereservation=lookup_widget(GTK_WIDGET(button),"afficherlistereservation");
+gtk_widget_destroy(afficherlistereservation);
+Home= create_Home();
+gtk_widget_show (Home);
+}
+
+
+void
+on_button7_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *Ajouter_N,*w;
+w=lookup_widget(GTK_WIDGET(button),"Home");
+gtk_widget_destroy(w);
+Ajouter_N= create_Ajouter_N();
+gtk_widget_show (Ajouter_N);
+}
+
+
+void
+on_button8_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *modifier_N,*w;
+w=lookup_widget(GTK_WIDGET(button),"Home");
+gtk_widget_destroy(w);
+modifier_N= create_modifier_N();
+gtk_widget_show (modifier_N);
+}
+
+
+void
+on_button9_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *supprimer_N,*w;
+w=lookup_widget(GTK_WIDGET(button),"Home");
+gtk_widget_destroy(w);
+supprimer_N= create_supprimer_N();
+gtk_widget_show (supprimer_N);
+}
+
+
+void
+on_button10_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *afficherlisteagents,*w;
+w=lookup_widget(GTK_WIDGET(button),"Home");
+gtk_widget_destroy(w);
+afficherlisteagents= create_afficherlisteagents();
+gtk_widget_show (afficherlisteagents);
+}
+
+
+void
+on_button11_clicked                    (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *afficherlistereservation,*w;
+w=lookup_widget(GTK_WIDGET(button),"Home");
+gtk_widget_destroy(w);
+afficherlistereservation= create_afficherlistereservation();
+gtk_widget_show (afficherlistereservation);
+}
+
+
+void on_button17_clicked(GtkButton *button, gpointer user_data) {
+    char ID_Parkingr[50];
+    GtkWidget *input_ID;
+    
+    input_ID = lookup_widget(GTK_WIDGET(button), "entry15");
+    
+    
+    strcpy(ID_Parkingr, gtk_entry_get_text(GTK_ENTRY(input_ID)));
+    
+    
+    if (strlen(ID_Parkingr) == 0) {
+        g_warning("L'ID_Parkingr est vide !");
+        return;  
+    }
+
+    
+    reservation("resrv.txt", ID_Parkingr);
+
+    
+    GtkWidget *Ajouter_N, *w_afficher, *treeview;
+    Ajouter_N = lookup_widget(GTK_WIDGET(button), "Ajouter_N");
+    gtk_widget_destroy(Ajouter_N);
+
+    Ajouter_N = create_Ajouter_N();
+    gtk_widget_show(Ajouter_N);
+
+   
+    w_afficher = lookup_widget(GTK_WIDGET(button), "afficherlistereservation");
+    treeview = lookup_widget(w_afficher, "treeview2");
+    afficherReservations(treeview, "reservation.txt");
+}
 
 // ---------------------------------------------------------------------------------
 // IBTIHEL BACCARI:
